@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th='http://www.thymeleaf.org'>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: 'arial';
+        }
+        #checkout-form input,
+        #checkout-form button {
+            display: block;
+            margin: 12px;
+        }
+    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<div id="error-message"></div>
+
+<div style="float: left; text-align: center; width: 200px; margin: 10px; padding: 10px; border: 1px solid">
+    <img src="/apple_ipad.jpg" alt="" style="height: 200px; max-width: 180px">
+    <p>price</p>
+</div>
+
+<button style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+        id="checkout-button" role="link">Checkout
+</button>
+
+<script>
+    var stripe = Stripe('[[${stripePublicKey}]]');
+    var checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.addEventListener('click', function () {
+        stripe.redirectToCheckout({
+            sessionId: '[[${CHECKOUT_SESSION_ID}]]',
+        }).then(function (result) {
+            if (result.error) {
+                var displayError = document.getElementById('error-message');
+                displayError.textContent = result.error.message;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
