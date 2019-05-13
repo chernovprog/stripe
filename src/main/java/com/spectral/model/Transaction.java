@@ -34,7 +34,7 @@ public class Transaction {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "transaction_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Transaction() {

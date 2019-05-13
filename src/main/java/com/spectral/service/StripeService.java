@@ -1,22 +1,18 @@
 package com.spectral.service;
 
 import com.google.gson.Gson;
+import com.spectral.dao.TransactionDao;
+import com.spectral.dao.UserDao;
 import com.spectral.model.Transaction;
+import com.spectral.model.User;
 import com.spectral.model.stripe.*;
 import com.stripe.Stripe;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Event;
-import com.stripe.model.WebhookEndpoint;
-import com.stripe.net.ApiResource;
-import com.sun.org.apache.bcel.internal.generic.I2F;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import spark.Request;
-import spark.Response;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +24,12 @@ public class StripeService {
 
     @Value("${WebhookEndpoint}")
     private String webhook;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TransactionDao transactionDao;
 
     @PostConstruct
     public void init() {
@@ -70,11 +72,21 @@ public class StripeService {
     public Boolean saveTransaction(String json) {
         JSONStripe jsonStripe = getJsonStripe(json);
         if (jsonStripe != null) {
-            Transaction transaction = getTransactionModel(jsonStripe);
-
-            //continue
-
-            return true;
+            Transaction transaction = getTransactionFromJson(jsonStripe);
+            String email = transaction.getEmail();
+            if (email != null) {
+                User userDB = userDao.getUserByEmail(email);
+                if (userDB == null) {
+                    String name = transaction.getName();
+                    String phone = transaction.getPhone();
+                    User user = new User(email, name, phone);
+                    userDao.addUser(user);
+                    User userByEmail = userDao.getUserByEmail(user.getEmail());
+                    transactionDao.addTransaction(userByEmail, transaction);
+                } else {
+                    transactionDao.addTransaction(userDB, transaction);
+                }
+            }
         }
 
         return false;
@@ -91,7 +103,7 @@ public class StripeService {
         return jsonStripe;
     }
 
-    private Transaction getTransactionModel(JSONStripe jsonStripe) {
+    private Transaction getTransactionFromJson(JSONStripe jsonStripe) {
         Transaction transaction = new Transaction();
 
         DataStripe data = jsonStripe.getData();
