@@ -1,6 +1,6 @@
 package com.spectral.model.stripe;
 
-public class Billing_details {
+public class BillingDetails {
     private String email;
     private String name;
     private String phone;
@@ -31,7 +31,7 @@ public class Billing_details {
 
     @Override
     public String toString() {
-        return "Billing_details{" +
+        return "BillingDetails{" +
                 "email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +

@@ -19,10 +19,16 @@ public class UserDao {
         em.persist(user);
     }
 
+    /**
+     * Get User from database by email. If there is no such user, we return null
+     *
+     * @param email
+     * @return
+     */
     public User getUserByEmail(String email) {
         User user = null;
         try {
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User AS u WHERE u.email = :email", User.class);
+            TypedQuery<User> query = em.createQuery(Queries.GET_USER_BY_EMAIL, User.class);
             query.setParameter("email", email);
             user = query.getSingleResult();
         } catch (HibernateException he) {

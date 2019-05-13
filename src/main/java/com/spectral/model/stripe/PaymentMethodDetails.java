@@ -1,6 +1,6 @@
 package com.spectral.model.stripe;
 
-public class Payment_method_details {
+public class PaymentMethodDetails {
     private Card card;
 
     public Card getCard() {
@@ -13,7 +13,7 @@ public class Payment_method_details {
 
     @Override
     public String toString() {
-        return "Payment_method_details{" +
+        return "PaymentMethodDetails{" +
                 "card=" + card +
                 '}';
     }

@@ -31,6 +31,9 @@ public class StripeService {
     @Autowired
     private TransactionDao transactionDao;
 
+    /**
+     * Initialize secret key for stripe object.
+     */
     @PostConstruct
     public void init() {
         Stripe.apiKey = stripeSecretKey;
@@ -46,6 +49,11 @@ public class StripeService {
         }*/
     }
 
+    /**
+     * Create parameters for Checkout Session
+     *
+     * @return parameters
+     */
     public Map<String, Object> getParams() {
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -69,8 +77,14 @@ public class StripeService {
         return params;
     }
 
+    /**
+     * Saving transaction to database. Each transaction is assigned to its user.
+     *
+     * @param json
+     * @return
+     */
     public Boolean saveTransaction(String json) {
-        JSONStripe jsonStripe = getJsonStripe(json);
+        JsonStripe jsonStripe = getJsonStripe(json);
         if (jsonStripe != null) {
             Transaction transaction = getTransactionFromJson(jsonStripe);
             String email = transaction.getEmail();
@@ -92,10 +106,16 @@ public class StripeService {
         return false;
     }
 
-    private JSONStripe getJsonStripe(String json) {
-        JSONStripe jsonStripe = null;
+    /**
+     * Convert Json to an custom object JsonStripe for convenient work with data.
+     *
+     * @param json
+     * @return
+     */
+    private JsonStripe getJsonStripe(String json) {
+        JsonStripe jsonStripe = null;
         try {
-            jsonStripe = new Gson().fromJson(json, JSONStripe.class);
+            jsonStripe = new Gson().fromJson(json, JsonStripe.class);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -103,7 +123,14 @@ public class StripeService {
         return jsonStripe;
     }
 
-    private Transaction getTransactionFromJson(JSONStripe jsonStripe) {
+    /**
+     * Create an object Transaction for database
+     * Fill the this object with a data from stripe data obtained by webhook
+     *
+     * @param jsonStripe
+     * @return Transaction object
+     */
+    private Transaction getTransactionFromJson(JsonStripe jsonStripe) {
         Transaction transaction = new Transaction();
 
         DataStripe data = jsonStripe.getData();
@@ -113,13 +140,13 @@ public class StripeService {
                 transaction.setAmount(object.getAmount());
                 transaction.setCurrency(object.getCurrency());
                 transaction.setStatus(object.getStatus());
-                Billing_details billing_details = object.getBilling_details();
+                BillingDetails billing_details = object.getBilling_details();
                 if (billing_details != null) {
                     transaction.setEmail(billing_details.getEmail());
                     transaction.setName(billing_details.getName());
                     transaction.setPhone(billing_details.getPhone());
                 }
-                Payment_method_details payment_details = object.getPayment_method_details();
+                PaymentMethodDetails payment_details = object.getPayment_method_details();
                 if (payment_details != null) {
                     Card card = payment_details.getCard();
                     if (card != null) {

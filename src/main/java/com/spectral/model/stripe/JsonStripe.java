@@ -1,6 +1,6 @@
 package com.spectral.model.stripe;
 
-public class JSONStripe {
+public class JsonStripe {
     private String id;
     private DataStripe data;
     private String type;
@@ -31,7 +31,7 @@ public class JSONStripe {
 
     @Override
     public String toString() {
-        return "JSONStripe{" +
+        return "JsonStripe{" +
                 "id='" + id + '\'' +
                 ", data=" + data +
                 ", type='" + type + '\'' +

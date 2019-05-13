@@ -2,9 +2,9 @@ package com.spectral.model.stripe;
 
 public class ObjectStripe {
     private Integer amount;
-    private Billing_details billing_details;
+    private BillingDetails billing_details;
     private String currency;
-    private Payment_method_details payment_method_details;
+    private PaymentMethodDetails payment_method_details;
     private String status;
 
     public Integer getAmount() {
@@ -15,11 +15,11 @@ public class ObjectStripe {
         this.amount = amount;
     }
 
-    public Billing_details getBilling_details() {
+    public BillingDetails getBilling_details() {
         return billing_details;
     }
 
-    public void setBilling_details(Billing_details billing_details) {
+    public void setBilling_details(BillingDetails billing_details) {
         this.billing_details = billing_details;
     }
 
@@ -31,11 +31,11 @@ public class ObjectStripe {
         this.currency = currency;
     }
 
-    public Payment_method_details getPayment_method_details() {
+    public PaymentMethodDetails getPayment_method_details() {
         return payment_method_details;
     }
 
-    public void setPayment_method_details(Payment_method_details payment_method_details) {
+    public void setPayment_method_details(PaymentMethodDetails payment_method_details) {
         this.payment_method_details = payment_method_details;
     }
 
