@@ -1,40 +1,21 @@
 package com.spectral.model;
 
-import javax.persistence.*;
 
-@Entity
-@Table(name = "transactions")
 public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
     private Integer amount;
-    @Column
     private String name;
-    @Column
     private String phone;
-    @Column
     private String email;
-    @Column
     private String currency;
-    @Column
     private String country;
-    @Column
     private String brand;
-    @Column
     private String last4;
-    @Column
     private String exp_month;
-    @Column
     private String exp_year;
-    @Column
     private String funding;
-    @Column
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     public Transaction() {

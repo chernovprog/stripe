@@ -5,25 +5,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Properties;
 
 @SpringBootApplication
 @ComponentScan(value = {"com.spectral.controller", "com.spectral.service", "com.spectral.dao"})
 @PropertySource("classpath:datasource.properties")
-public class Application  implements WebMvcConfigurer {
+public class Application implements WebMvcConfigurer {
 
     @Autowired
     private Environment env;
@@ -33,6 +27,30 @@ public class Application  implements WebMvcConfigurer {
     }
 
     @Bean
+    public DataSource mysqlDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(env.getProperty("ds.database-driver"));
+        dataSource.setUrl("ds.url");
+        dataSource.setUsername(env.getProperty("ds.username"));
+        dataSource.setPassword(env.getProperty("ds.password"));
+
+        return dataSource;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.HSQL)
+                .addScript("classpath:jdbc/schema.sql")
+                .addScript("classpath:jdbc/test-data.sql").build();
+    }
+
+    /*@Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }*/
+
+    /*@Bean
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName(env.getProperty("ds.database-driver"));
@@ -62,11 +80,7 @@ public class Application  implements WebMvcConfigurer {
         entityManagerFactory.setJpaProperties(jpaProp);
         entityManagerFactory.setPackagesToScan("com.spectral.model");
         return entityManagerFactory;
-    }
+    }*/
 
-    @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
-    }
 
 }

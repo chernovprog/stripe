@@ -96,9 +96,9 @@ public class StripeService {
                     User user = new User(email, name, phone);
                     userDao.addUser(user);
                     User userByEmail = userDao.getUserByEmail(user.getEmail());
-                    transactionDao.addTransaction(userByEmail, transaction);
+                    //transactionDao.addTransaction(userByEmail, transaction);
                 } else {
-                    transactionDao.addTransaction(userDB, transaction);
+                    //transactionDao.addTransaction(userDB, transaction);
                 }
             }
         }
